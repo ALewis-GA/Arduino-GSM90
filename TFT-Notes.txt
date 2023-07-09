@@ -1,0 +1,107 @@
+Using MCUFriend_kbv library with JayCar XC4630 2.4" TFT Touch screen: purchased 2022-09-15
+=====================================================================
+
+
+C:\Users\andr3\Documents\Arduino\libraries\MCUFRIEND_kbv\examples\graphictest_kbv
+
+Plug screen shield into Uno and...
+
+Run "LCD_ID_readreg": that indicated ID 0x9595
+
+==============================================================
+Read Registers on MCUFRIEND UNO shield
+controllers either read as single 16-bit
+e.g. the ID is at readReg(0)
+or as a sequence of 8-bit values
+in special locations (first is dummy)
+
+reg(0x0000) 95 95	ID: ILI9320, ILI9325, ILI9335, ...
+reg(0x0004) 00 00 00 00	Manufacturer ID
+reg(0x0009) 3F 3F 3F 3F 3F	Status Register
+reg(0x000A) 00 00	Get Power Mode
+reg(0x000C) 01 01	Get Pixel Format
+reg(0x0061) 00 00	RDID1 HX8347-G
+reg(0x0062) 00 00	RDID2 HX8347-G
+reg(0x0063) 00 00	RDID3 HX8347-G
+reg(0x0064) 00 00	RDID1 HX8347-A
+reg(0x0065) 00 00	RDID2 HX8347-A
+reg(0x0066) 00 00	RDID3 HX8347-A
+reg(0x0067) 00 00	RDID Himax HX8347-A
+reg(0x0070) 00 00	Panel Himax HX8347-A
+reg(0x00A1) 00 00 00 00 00	RD_DDB SSD1963
+reg(0x00B0) 00 00	RGB Interface Signal Control
+reg(0x00B4) 00 00	Inversion Control
+reg(0x00B6) 00 00 00 00 00	Display Control
+reg(0x00B7) 00 00	Entry Mode Set
+reg(0x00BF) 00 00 00 00 00 00	ILI9481, HX8357-B
+reg(0x00C0) 00 00 00 00 00 00 00 00 00	Panel Control
+reg(0x00C8) 00 00 00 00 00 00 00 00 00 00 00 00 00	GAMMA
+reg(0x00CC) 00 00	Panel Control
+reg(0x00D0) 00 00 00	Power Control
+reg(0x00D2) 00 00 00 00 00	NVM Read
+reg(0x00D3) 00 00 00 00	ILI9341, ILI9488
+reg(0x00D4) 00 00 00 00	Novatek ID
+reg(0x00DA) 00 00	RDID1
+reg(0x00DB) 00 00	RDID2
+reg(0x00DC) 00 00	RDID3
+reg(0x00E0) 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03	GAMMA-P
+reg(0x00E1) 06 06 06 06 06 06 06 06 06 06 06 06 06 06 06 06	GAMMA-N
+reg(0x00EF) 14 14 14 14 14 14	ILI9327
+reg(0x00F2) 08 08 08 08 08 08 08 08 08 08 08 08	Adjust Control 2
+reg(0x00F6) 00 00 00 00	Interface Control
+========================================================================================
+
+
+
+2) In "MCUFRIEND_kbv.cpp" undefine support for most chipsets, define support for the following (based on HX8347 listing above
+
+#define SUPPORT_8347D             //HX8347-D, HX8347-G, HX8347-I, HX8367-A +520 bytes, 0.27s
+
+
+3) run MCUFriend "graphictest_kbv" 
+   didnt work at first, alter setup() to include final line  tft.begin(0x9595);
+   that worked; but no reason to do this, so changed it back and to tft.begin(ID); and it worked!
+   
+4)   tried "GLUE_Demo_320x240 - that worked well.
+
+5)   tried "TouchScreen_Calibr_native - that worked well
+
+    *** COPY-PASTE from Serial Terminal:
+    const int XP=8,XM=A2,YP=A3,YM=9; //240x320 ID=0x9595
+    const int TS_LEFT=910,TS_RT=107,TS_TOP=84,TS_BOT=905;
+    
+    PORTRAIT  CALIBRATION     240 x 320
+    x = map(p.x, LEFT=910, RT=107, 0, 240)
+    y = map(p.y, TOP=84, BOT=905, 0, 320)
+    
+    LANDSCAPE CALIBRATION     320 x 240
+    x = map(p.y, LEFT=84, RT=905, 0, 320)
+    y = map(p.x, TOP=107, BOT=910, 0, 240)
+
+=================
+
+2023-04-16
+Tried using a new JayCar 240x 320 TFT touch screen labelled "2.8: TFT LCD Shield V3 (Driver UC8230). It did not 
+work with GSM90-Touch 
+
+Followed my instructions above to investigate ID
+LCD_ID_readreg indicated ID  0X8230
+
+Changed MCUFRIEND_kbv.cpp to define support for the UC8230; while also leaving support for the older
+JayCar TouchScreen 8347D defined 
+
+MCUFriend "graphictest_kbv"   Worked OK
+"GLUE_Demo_320x240 -  worked well.
+
+TouchScreen_Calibr_native -  worked well and ran a screen calibration routine.
+It wrote output to the screen and the serial monitor, but different output
+Screen output was:
+Touch Pin Wiring XP=8 XM=A2 YP=A3 YM=9
+
+Portrait Calibration  240 x 320
+x = map(p.x,LEFT=918, RT=97, 0, 240)
+y = map(p.y, TOP=65, BOT=895, 0, 320)
+
+LANDSCAPE Calibration  320 x 240
+x = map(p.y,LEFT=65, RT=895, 0, 320)
+y = map(p.x, TOP=97, BOT=918, 0, 240)

@@ -357,6 +357,7 @@ void comms() {
     Serial.print("F");
 
     TotalField = Serial.readString();
+//    TotalField = Serial.readStringUntil('\n');
     FLen=TotalField.length();
     
     tft.setCursor(70,yloc);
