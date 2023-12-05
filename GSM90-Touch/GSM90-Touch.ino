@@ -18,6 +18,7 @@
 // Version 1.1 2022-10-18 increase wait period at end of comms
 // Version 1.3 2022-11-08 include serial buffer flush before/after "T" and after "F" command
 // Version 1.4 2023-04-16 more info displayed to TFT screen, none displayed to serial monitor at start up
+// Version 1.5 2023-12-05 increase GSM90F_timeout from 3500 to 4000 to work with older style magnetometers
 // Andrew Lewis
 ******************************************************************/
 
@@ -33,7 +34,7 @@ MCUFRIEND_kbv tft;
 #include <TouchScreen.h>
 
 // Set software version number
-#define _VERSION 1.4
+#define _VERSION 1.5
 
 // Touch screen pressure limits
 #define MINPRESSURE 200
@@ -85,7 +86,8 @@ int i = 0;
 
 // GSM90F_timeout must be at least 3.5 seconds; set the sum of the two GSM90* values to give desired sampling rate
 // trial and error provided the values below for a 10 s sampling rate
-int GSM90F_sampling_delay = 3500, GSM90F_timeout = 3500, short_delay = 50;
+// Increase GSM90F_timeout to 4000.  3500 times-out for "a" quality readings with older-style magnetometers (it works OK for newer mags) 2023-12-05
+int GSM90F_sampling_delay = 3500, GSM90F_timeout = 4000, short_delay = 50;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // get touch locations (AdaFruit)
