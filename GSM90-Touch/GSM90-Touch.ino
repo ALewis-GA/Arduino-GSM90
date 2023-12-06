@@ -87,7 +87,8 @@ int i = 0;
 // GSM90F_timeout must be at least 3.5 seconds; set the sum of the two GSM90* values to give desired sampling rate
 // trial and error provided the values below for a 10 s sampling rate
 // Increase GSM90F_timeout to 4000.  3500 times-out for "a" quality readings with older-style magnetometers (it works OK for newer mags) 2023-12-05
-int GSM90F_sampling_delay = 3500, GSM90F_timeout = 4000, short_delay = 50;
+// Decrease GSM90_sampling_delay from 3500 to 3000 as a compromise between older-style and newer-style instruments to maintain close to 10 second samples
+int GSM90F_sampling_delay = 3000, GSM90F_timeout = 4000, short_delay = 50;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // get touch locations (AdaFruit)
