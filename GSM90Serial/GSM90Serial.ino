@@ -16,12 +16,14 @@
 // Some routines from https://github.com/harleo/arduino-lcd-menu
 // Version 1.5 2022-08-22
 // Version 1.6 2023-12-11  Update time outs for older model GSM90
-//              Include serial buffer flush (as in Touch screen version; 
-//           - serial monitor output on start
+//                         Include serial buffer flush
 // Andrew Lewis
 ******************************************************************/
 #include <LiquidCrystal.h>
 #include <EEPROM.h>
+
+// Set software version number
+char Version[5] = "1.6";
 
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
@@ -34,6 +36,7 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
 //Observatory specific parameters. 
 char WelcomeString[16] = "GA Geomag";
+
 // faster baud rates (eg 38400) has implications for signed "int" data type in this code
 // Should change to unsigned int (and also LCD display function "printInt")
 int baudSelect[5] = {300, 1200, 4800, 9600, 19200};
@@ -103,7 +106,7 @@ void initLCD() {
   pinMode(13, OUTPUT);
   digitalWrite(13,LOW);  
   
-  printStr(WelcomeString,0,0);
+  printStr(WelcomeString,0,0); printStr("V",11,0); printStr(Version,12,0);
 // display start-up parameters  
   printStr("T",0,1); printInt(tune,1,1);
   printStr("#",4,1); printInt(repeats,5,1);
@@ -366,9 +369,7 @@ void comms() {
   while (Serial.available() > 0) {
     k = Serial.read();
   }
-
   delay(display_delay_long);
-
 
 // Initiate field readings
   Serial.setTimeout(GSM90F_timeout);
