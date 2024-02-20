@@ -1,6 +1,6 @@
 /*****************************************************************
 // Serial Comms to GSM90 magnetometer for std absolute observations
-// assumes: Arduino Uno;
+// assumes: Arduino Uno R3 or R4 (reference to serial port depends on board)
 //        : LCD display 2 line, 16 character, 6 button;
 //        : RS-232 shield (must be enabled with on-board switch)
 // Without RS-232 shield (or disabled RS-232 shield) all serial comms are 
@@ -17,6 +17,7 @@
 // Version 1.5 2022-08-22
 // Version 1.6 2023-12-11  Update time outs for older model GSM90
 //                         Include serial buffer flush
+// ** When using UNO R4 must use "Serial1" object ( not "Serial" as for UNO R3) **
 // Andrew Lewis
 ******************************************************************/
 #include <LiquidCrystal.h>
@@ -342,22 +343,22 @@ void comms() {
   clearLine(0); clearLine(1);
 // serial port needs to be set up here in case baud rate has been changed from menu
 // data bits, parity, stop bits cannot be changed interactively
-  Serial.begin(baudSelect[baudIndex],SERIAL_8N1);
-  Serial.setTimeout(1000);
+  Serial1.begin(baudSelect[baudIndex],SERIAL_8N1);
+  Serial1.setTimeout(1000);
 // wait for serial port to connect.  
-  while (!Serial) {
+  while (!Serial1) {
     delay(short_delay); 
   }
   clearLine(0);
   printStr("T",0,0); printInt(tune,1,0);  
 
 // flush the serial buffer before tune command
-  while (Serial.available() > 0) {
-    k = Serial.read();
+  while (Serial1.available() > 0) {
+    k = Serial1.read();
   }
 // Initiate Tune command to the magnetometer  
-  Serial.print("T"); Serial.println(tune);
-  TuneResponse = Serial.readString();
+  Serial1.print("T"); Serial1.println(tune);
+  TuneResponse = Serial1.readString();
   if ( TuneResponse.length() < 2) {
     clearLine(1);
     printStr("Tuning timed out",0,1);
@@ -366,31 +367,31 @@ void comms() {
   else  printStr(TuneResponse,0,1);
 
 // flush the serial buffer after tune command
-  while (Serial.available() > 0) {
-    k = Serial.read();
+  while (Serial1.available() > 0) {
+    k = Serial1.read();
   }
   delay(display_delay_long);
 
 // Initiate field readings
-  Serial.setTimeout(GSM90F_timeout);
+  Serial1.setTimeout(GSM90F_timeout);
   for (i = 0; i < repeats; i++) {
     clearLine(0);
     printInt(i+1,0,0);   printStr("F ",5,0);
     clearLine(1);
 
 // flush the serial buffer
-  while (Serial.available() > 0) {
-    k = Serial.read();
+  while (Serial1.available() > 0) {
+    k = Serial1.read();
   }
-    Serial.print("F");
-    TotalField = Serial.readString();
+    Serial1.print("F");
+    TotalField = Serial1.readString();
     FLen=TotalField.length();
 // dont display EOL chars at end of valid field readings    
     if ( FLen < 2) printStr("Field timed out",0,1);
     else printStr(TotalField.substring(0,FLen-1),0,1);
  // flush the serial buffer after "F" command
-    while (Serial.available() > 0) {
-      k = Serial.read();
+    while (Serial1.available() > 0) {
+      k = Serial1.read();
     }
     delay(GSM90F_sampling_delay);
   }
