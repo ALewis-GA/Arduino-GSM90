@@ -4,7 +4,8 @@
 //        : TFT LCD TouchScreen 240 x 320  ID 0x9595 (Jaycar XC4630)
 //        : RS-232 shield (must be enabled with on-board switch) (Core Electronics DFR0258)
 //        : Adafruit_GFX library; TouchScreen library; EEPROM Library 
-//        : MCUFriend-kbv library
+//        : MCUFriend-kbv library (from V1.6 must use library from https://github.com/slviajero/MCUFRIEND_kbv which is an update for
+//          Uno R4 boards)
 //
 // Without RS-232 shield (or disabled RS-232 shield) all serial comms are 
 // directed to Arduino and can be viewed from the "serial monitor" in the 
@@ -19,6 +20,7 @@
 // Version 1.3 2022-11-08 include serial buffer flush before/after "T" and after "F" command
 // Version 1.4 2023-04-16 more info displayed to TFT screen, none displayed to serial monitor at start up
 // Version 1.5 2023-12-05 increase GSM90F_timeout from 3500 to 4000 to work with older style magnetometers
+// Version 1.6 2026-04-05 Update MCUFriend_kbv library to support touch screen on R4 UNO-Minima + R4 Uno-Wifi
 // Andrew Lewis
 ******************************************************************/
 
@@ -34,7 +36,7 @@ MCUFRIEND_kbv tft;
 #include <TouchScreen.h>
 
 // Set software version number
-#define _VERSION 1.5
+#define _VERSION 1.6
 
 // Touch screen pressure limits
 #define MINPRESSURE 200
